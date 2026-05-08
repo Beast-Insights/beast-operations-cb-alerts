@@ -34,8 +34,16 @@ function buildPoolConfig(): PoolConfig {
         : { rejectUnauthorized: false }
 
   if (url) {
+    // Strip any sslmode/ssl params from the URL so our explicit `ssl` option
+    // in PoolConfig wins. Without this, pg sometimes lets the connection-
+    // string's sslmode=require turn on strict cert validation, which fails
+    // against db.beastinsights.com (CNAME pointing at *.database.azure.com).
+    const cleanUrl = url
+      .replace(/([?&])(sslmode|ssl)=[^&]*/g, '$1')
+      .replace(/[?&]+$/, '')
+      .replace(/\?&/, '?')
     return {
-      connectionString: url,
+      connectionString: cleanUrl,
       ssl,
       max: numFromEnv('PG_POOL_MAX', 5),
       idleTimeoutMillis: numFromEnv('PG_IDLE_MS', 5000),
