@@ -40,8 +40,11 @@ export type E2eInputs = {
   prev_status: ScraperStatus | null;
   /** mid_manager.credentials_status */
   credentials_status: string | null;
-  /** chargebacks_raw freshness */
-  last_chargeback_date: string | null;
+  /** chargebacks_raw freshness — number of rows that landed in the load step
+   * over the last 7 days. Drives silent-failure detection. */
+  rows_loaded_last_7d: number;
+  /** Lifetime row count for this scraper in chargebacks_raw. Used to gate
+   * silent-failure detection so brand-new merchants don't false-positive. */
   rows_total_in_prod: number;
   /** number of consecutive failed runs in scraper_run_log (most recent first) */
   consecutive_failures: number;
@@ -66,23 +69,37 @@ export function computeProdDataAgeDays(
 }
 
 /**
- * Decide whether a scraper is in "silent failure" mode:
- *   - last cron run reported success or no_data, AND
- *   - the scraper has produced rows in chargebacks_raw historically, AND
- *   - the latest chargeback is older than SILENT_FAILURE_DAYS.
+ * Decide whether a scraper is in "silent failure" mode.
  *
- * Skipping the check when rows_total_in_prod=0 avoids false-positives for
+ * Definition: the scraper claims it exported rows (`last_status='success'`)
+ * but no rows have landed in `chargebacks_raw` over the last 7 days. That's
+ * the classic load-step regression — scrape ran fine, but the blob → DB step
+ * (or the scraper itself silently dropping rows) is broken.
+ *
+ * IMPORTANT — `no_data` is NEVER silent failure:
+ *   When a scraper reports `no_data` it means "I visited the portal and
+ *   there genuinely are no chargebacks for this filter window." That is
+ *   correct behaviour for quiet merchants — flagging it as silent failure
+ *   creates noise indistinguishable from real outages.
+ *
+ * Skipping the check when `rows_total_in_prod=0` avoids false-positives for
  * brand-new merchants that have legitimately never had a chargeback.
+ *
+ * What we DO NOT use here:
+ *   - `last_chargeback_date` (the dispute date) — a stale dispute date just
+ *     means there haven't been new disputes recently, not that the load
+ *     step is broken. The old code conflated these.
+ *   - `rows_loaded_last_24h` alone — 7d is the load horizon we trust;
+ *     24h-only would flag weekend-quiet portals.
  */
 export function isSilentFailure(
   last_status: ScraperStatus | null,
-  prod_data_age_days: number | null,
+  rows_loaded_last_7d: number,
   rows_total_in_prod: number,
 ): boolean {
-  if (last_status !== 'success' && last_status !== 'no_data') return false;
-  if (rows_total_in_prod <= 0) return false;
-  if (prod_data_age_days === null) return true;  // no chargeback rows at all → silent
-  return prod_data_age_days > SILENT_FAILURE_DAYS;
+  if (last_status !== 'success') return false;   // no_data / failed = not silent
+  if (rows_total_in_prod <= 0) return false;     // brand-new merchant, can't tell
+  return rows_loaded_last_7d === 0;
 }
 
 /**
@@ -109,7 +126,7 @@ export function computeE2eStatus(inputs: E2eInputs): E2eStatus {
     last_run_utc,
     prev_status,
     credentials_status,
-    last_chargeback_date,
+    rows_loaded_last_7d,
     rows_total_in_prod,
     consecutive_failures,
   } = inputs;
@@ -140,9 +157,8 @@ export function computeE2eStatus(inputs: E2eInputs): E2eStatus {
     return 'regressed';
   }
 
-  // 3. Silent failure — green cron but stale prod data
-  const ageDays = computeProdDataAgeDays(last_chargeback_date, rows_total_in_prod);
-  if (isSilentFailure(last_status, ageDays, rows_total_in_prod)) {
+  // 3. Silent failure — green cron but rows aren't reaching chargebacks_raw
+  if (isSilentFailure(last_status, rows_loaded_last_7d, rows_total_in_prod)) {
     return 'silent_failure';
   }
 

@@ -249,7 +249,7 @@ export async function GET(req: Request) {
         last_run_utc: latest ? new Date(latest.ts_utc).toISOString() : null,
         prev_status: prev?.status ?? null,
         credentials_status: m.credentials_status,
-        last_chargeback_date: last_cb_date,
+        rows_loaded_last_7d: fresh ? Number(fresh.rows_loaded_last_7d) : 0,
         rows_total_in_prod: rows_total,
         consecutive_failures: agg?.consecutive_failures ?? 0,
       });

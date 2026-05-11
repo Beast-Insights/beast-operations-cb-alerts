@@ -144,7 +144,7 @@ export async function GET(req: Request) {
         fresh?.last_chargeback_date ?? null, rows_total_in_prod,
       );
       const is_silent_failure = isSilentFailure(
-        latest?.status ?? null, prod_data_age_days, rows_total_in_prod,
+        latest?.status ?? null, rows_loaded_last_7d, rows_total_in_prod,
       );
       const e2e_status = computeE2eStatus({
         last_status: latest?.status ?? null,
@@ -152,7 +152,7 @@ export async function GET(req: Request) {
         last_run_utc: latest ? new Date(latest.ts_utc).toISOString() : null,
         prev_status: sortedRuns[1]?.status ?? null,
         credentials_status: m.credentials_status,
-        last_chargeback_date,
+        rows_loaded_last_7d,
         rows_total_in_prod,
         consecutive_failures,
       });
