@@ -131,8 +131,20 @@ export function computeE2eStatus(inputs: E2eInputs): E2eStatus {
     consecutive_failures,
   } = inputs;
 
-  // Stale / never ran takes precedence when there's no run signal at all.
-  if (!last_run_utc || !last_status) return 'stale_no_run';
+  // No scraper_run_log row for this exact (client, processor, gateway).
+  // Two distinct cases share this state:
+  //   A) Multi-gateway shared-login peer — the orchestrator dispatched ONE
+  //      scrape call (logged under the primary gateway), and the loader
+  //      wrote rows to chargebacks_raw under multiple gateway_ids. This
+  //      gateway has no own log row but is being served correctly via its
+  //      peer. Evidence: rows_loaded_last_7d > 0 for this gateway.
+  //   B) Genuinely never ran / unmapped — no log row AND no recent data.
+  // Trust the data path: if rows are landing for this gateway, it's
+  // healthy regardless of whether the log captured the invocation.
+  if (!last_run_utc || !last_status) {
+    if (rows_loaded_last_7d > 0) return 'healthy';
+    return 'stale_no_run';
+  }
 
   const ageMs = Date.now() - new Date(last_run_utc).getTime();
   const isStale = Number.isFinite(ageMs) && ageMs > STALE_HOURS * 60 * 60 * 1000;
