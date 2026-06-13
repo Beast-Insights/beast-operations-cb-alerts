@@ -1,0 +1,68 @@
+
+> tremor-demo@1.0.0 dev
+> next dev
+
+  ▲ Next.js 14.2.20
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+   Downloading swc package @next/swc-win32-x64-msvc...
+ ✓ Ready in 14.9s
+ ○ Compiling /api/ops/scrapers ...
+ ✓ Compiled /api/ops/scrapers in 1025ms (61 modules)
+ GET /api/ops/scrapers 200 in 5019ms
+ GET /api/ops/scrapers?refresh=1 200 in 677ms
+ ✓ Compiled /api/ops/overview in 125ms (63 modules)
+ GET /api/ops/overview 200 in 3620ms
+ ○ Compiling / ...
+ ✓ Compiled / in 6.6s (517 modules)
+ GET / 307 in 6800ms
+ ○ Compiling /ops ...
+ ✓ Compiled /ops in 11.9s (1699 modules)
+ GET /ops 200 in 12398ms
+ ○ Compiling /ops/scrapers ...
+ ✓ Compiled /ops/scrapers in 1070ms (1793 modules)
+ GET /ops/scrapers 200 in 1365ms
+ GET /ops 200 in 195ms
+ GET /ops 200 in 43ms
+ GET /ops/scrapers 200 in 51ms
+ GET /ops 200 in 82ms
+ GET /api/ops/overview 200 in 3579ms
+ GET /api/ops/overview 200 in 3671ms
+ GET /api/ops/scrapers 200 in 37ms
+ GET /api/ops/scrapers 200 in 34ms
+ GET /api/ops/scrapers 200 in 3790ms
+ GET /api/ops/overview 200 in 18ms
+ GET /api/ops/overview 200 in 17ms
+ GET /api/ops/scrapers 200 in 29ms
+ GET /api/ops/scrapers 200 in 26ms
+ GET /api/ops/overview 200 in 15ms
+ GET /api/ops/overview 200 in 14ms
+ GET /api/ops/scrapers 200 in 27ms
+ GET /api/ops/scrapers 200 in 26ms
+ GET /api/ops/scrapers 200 in 3396ms
+ GET /api/ops/scrapers 200 in 3766ms
+ GET /api/ops/scrapers 200 in 4642ms
+ GET /api/ops/scrapers 200 in 4501ms
+ GET /api/ops/scrapers 200 in 4526ms
+ GET /api/ops/scrapers 200 in 4614ms
+ GET /api/ops/scrapers 200 in 6023ms
+ GET /api/ops/scrapers 200 in 34ms
+ GET /api/ops/scrapers 200 in 4730ms
+ GET /api/ops/scrapers 200 in 3797ms
+ GET /api/ops/scrapers 200 in 56ms
+ GET /api/ops/scrapers 200 in 3851ms
+ GET /api/ops/scrapers 200 in 4634ms
+ GET /api/ops/scrapers 200 in 4055ms
+ GET /api/ops/scrapers 200 in 4268ms
+ GET /api/ops/scrapers 200 in 5396ms
+ GET /api/ops/scrapers 200 in 67ms
+ GET /api/ops/scrapers 200 in 4182ms
+ GET /api/ops/scrapers 200 in 4030ms
+ GET /api/ops/scrapers 200 in 3951ms

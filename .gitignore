@@ -1,0 +1,68 @@
+# =============================================================================
+# Dependencies & build output
+# =============================================================================
+node_modules/
+.pnp
+.pnp.*
+.yarn/install-state.gz
+
+# Next.js build artefacts
+.next/
+out/
+build/
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+next-env.d.ts
+
+# =============================================================================
+# Secrets — NEVER commit
+# =============================================================================
+.env
+.env.*
+!.env.example
+
+# =============================================================================
+# Local-only diagnostic scripts (contain hard-coded DB credentials)
+# Keep these on disk for ad-hoc investigation, but never push them.
+# =============================================================================
+analyze-rdr.js
+analyze-ethoca.mjs
+check-rdr.js
+verify-rdr.js
+export_alerts.js
+export_csv.js
+query_all_alerts.js
+rdr-fields.js
+make_batches.js
+upload_chunks.js
+upload_to_sheet.js
+scripts/
+
+# =============================================================================
+# Reference copies of upstream Tremor source — not part of this app
+# =============================================================================
+tremor-blocks-ref/
+tremor-raw-ref/
+
+# =============================================================================
+# Local data dumps & ad-hoc exports
+# =============================================================================
+*.csv
+*.xlsx
+/tmp/
+
+# =============================================================================
+# Editor / OS noise
+# =============================================================================
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+.claude/
+
+# =============================================================================
+# Vercel
+# =============================================================================
+.vercel
