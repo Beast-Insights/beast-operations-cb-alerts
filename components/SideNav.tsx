@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import {
   RiAlertLine,
   RiBarChart2Line,
+  RiBankLine,
   RiSunLine,
   RiMoonLine,
   RiMenuFoldLine,
@@ -27,7 +28,7 @@ const NAV: NavItem[] = [
     label: 'Alerts',
     href: '/workflow',
     icon: RiAlertLine,
-    // anything that isn't a CB Reporting page belongs to Alerts
+    // anything that isn't a CB Reporting or Deposit Recon page belongs to Alerts
     matches: ['/', '/alerts', '/workflow', '/processing', '/ops'],
   },
   {
@@ -36,12 +37,22 @@ const NAV: NavItem[] = [
     icon: RiBarChart2Line,
     matches: ['/cb'],
   },
+  {
+    label: 'Deposit Recon',
+    href: '/recon',
+    icon: RiBankLine,
+    matches: ['/recon'],
+  },
 ]
 
 function isActive(pathname: string, item: NavItem): boolean {
   // CB Reporting wins whenever the path is /cb...
   if (pathname === '/cb' || pathname.startsWith('/cb/')) {
     return item.label === 'Chargeback Reporting'
+  }
+  // Deposit Recon wins whenever the path is /recon...
+  if (pathname === '/recon' || pathname.startsWith('/recon/')) {
+    return item.label === 'Deposit Recon'
   }
   // Otherwise Alerts is the active section for every other path
   return item.label === 'Alerts'
