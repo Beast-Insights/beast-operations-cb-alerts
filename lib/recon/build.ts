@@ -18,6 +18,11 @@ import type {
 
 const RUNS_PER_AGENT = 12;
 const STALE_HOURS = 36;
+// Gateways whose most recent run is older than this are treated as defunct /
+// decommissioned (e.g. a MID that was replaced) and dropped from the board — a
+// daily job that hasn't run in a week is no longer a live agent. Their historic
+// runs still count in the overview aggregates.
+const IDLE_DROP_HOURS = 7 * 24;
 const GRID_DAYS = 30;
 const CACHE_TTL_MS = 55_000;
 
@@ -189,6 +194,9 @@ function buildSnapshot(rows: LogRow[], now: Date): Snapshot {
     allRuns.push(...ag.runs);
     const latest = ag.runs[0];
     const ageH = (now.getTime() - new Date(latest.ended_utc).getTime()) / 3_600_000;
+    // Defunct gateway (idle beyond the drop cutoff): keep its runs in the
+    // overview history above, but drop it from the board entirely.
+    if (ageH > IDLE_DROP_HOURS) continue;
     let status: AgentStatus = latest.status;
     if (status === 'healthy' && ageH > STALE_HOURS) status = 'stale';
 

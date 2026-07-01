@@ -115,40 +115,30 @@ export function isSkipArtifact(e: RawEvent): boolean {
 }
 
 /**
- * Phases whose *warnings* must NOT downgrade the overall run colour. Everything
- * from `gather_inputs` onward is downstream of the data we must capture: once
- * the processor scrape, the bank cross-check and the core reconcile are in, an
- * amber here (e.g. "no bank rows attributed, funds-held checks limited") is
- * shown on its own pipeline row but leaves the run — and the 7-day strip — green.
- *
- * This forgives WARNINGS only. A hard error (✕) in ANY phase — including the
- * bank login / bank scrape — is a real failure and turns the run red. Unknown
- * phases are treated as critical on purpose, so new failure modes surface loudly.
+ * A login failure is the only thing that turns the board red. Any phase whose
+ * name mentions "login" (portal_login, scrape_login, bank_login, …) counts: if
+ * the scraper can't even sign in, it genuinely can't do its job.
  */
-const WARNING_FORGIVEN_PHASES = new Set<string>([
-  'gather_inputs', 'attribute', 'attribute_bank', 'compute_naa',
-  'match_naa_to_bank', 'classify', 'reconcile', 'evaluate_alerts',
-  'drift', 'drift_check', 'lifecycle_reconcile', 'persist', 'cleanup',
-]);
-
-export function isWarningForgivenPhase(phase: string | null): boolean {
-  return phase != null && WARNING_FORGIVEN_PHASES.has(phase);
+export function isLoginPhase(phase: string | null): boolean {
+  return phase != null && /login/i.test(phase);
 }
 
+/**
+ * Run colour is driven ONLY by a login failure. Everything else — warnings and
+ * downstream errors alike — is surfaced per-step in the drawer pipeline (each
+ * step keeps its own amber '!' or red '✕' and message via {@link buildSteps}),
+ * but the row status badge and the 7-day strip stay green.
+ *
+ * Rationale: once the scraper has logged in and run, a later error (e.g. a
+ * settlements page that wouldn't load, a statement not yet published, a download
+ * that fell back to the on-page table) is a per-step detail, not an at-a-glance
+ * failure of the agent. Only an inability to sign in makes the agent red.
+ */
 export function runStatus(events: RawEvent[]): RunStatus {
-  const hasRunSuccess = events.some((e) => e.phase === 'run' && e.level === 'SUCCESS');
-  const realErrors = events.filter((e) => e.level === 'ERROR' && !isSkipArtifact(e));
-
-  // A genuine error (✕) anywhere — bank login included — is a failure: red.
-  if (realErrors.length) return 'error';
-  if (events.some(isSkipArtifact) && !hasRunSuccess) return 'error';
-
-  // No errors. A warning in a mission-critical phase → amber; a warning only in
-  // the downstream steps is shown per-row but keeps the run (and 7-day) green.
-  const criticalWarning = events.some(
-    (e) => e.level === 'WARNING' && !isWarningForgivenPhase(e.phase),
+  const loginFailed = events.some(
+    (e) => e.level === 'ERROR' && isLoginPhase(e.phase),
   );
-  return criticalWarning ? 'warning' : 'healthy';
+  return loginFailed ? 'error' : 'healthy';
 }
 
 export function buildSteps(events: RawEvent[]): Step[] {
