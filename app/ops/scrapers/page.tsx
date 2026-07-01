@@ -149,7 +149,6 @@ export default function ScrapersPage() {
                   <TableHeaderCell>Scraper</TableHeaderCell>
                   <TableHeaderCell>Bank</TableHeaderCell>
                   <TableHeaderCell>Last run</TableHeaderCell>
-                  <TableHeaderCell className="text-right">Open alerts</TableHeaderCell>
                   <TableHeaderCell className="text-right">Reconciled</TableHeaderCell>
                   <TableHeaderCell className="text-right">7-day</TableHeaderCell>
                 </TableRow>
@@ -175,15 +174,6 @@ export default function ScrapersPage() {
                           {ok ? '✓' : '✕'}
                         </span>{' '}
                         <span className="text-gray-500 dark:text-gray-500">{formatRelative(r.last_run_utc)}</span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {r.open_alerts ? (
-                          <span className="rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:bg-amber-500/15 dark:text-amber-400">
-                            {r.open_alerts}
-                          </span>
-                        ) : (
-                          <span className="text-xs text-gray-400 dark:text-gray-600">0</span>
-                        )}
                       </TableCell>
                       <TableCell className="text-right tabular-nums text-gray-600 dark:text-gray-400">
                         {r.reconciled != null ? formatInt(r.reconciled) : '—'}
