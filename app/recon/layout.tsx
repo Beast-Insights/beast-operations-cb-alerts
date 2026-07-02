@@ -17,7 +17,7 @@ export default function OpsLayout({ children }: { children: React.ReactNode }) {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 pt-4 sm:px-6">
           <div>
             <h1 className="text-base font-semibold text-gray-900 dark:text-gray-50">
-              Beast Recon — Agent Status
+              Beast Deposit Reconciliation Agent Status
             </h1>
             <p className="text-xs text-gray-500 dark:text-gray-500">
               Operations &amp; monitoring for the daily reconciliation pipeline.
