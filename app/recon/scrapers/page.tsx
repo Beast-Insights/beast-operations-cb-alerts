@@ -18,8 +18,13 @@ import { StatusBadge, Sparkline7, Pipeline, ErrorBox } from '../_shared'
 
 const POLL_MS = 60_000
 
+// Processors whose names are acronyms and should render fully uppercase
+// rather than title-cased (e.g. "pps" → "PPS", not "Pps").
+const PROC_ACRONYMS = new Set(['pps'])
+
 function procName(p: string | null): string {
   if (!p) return 'Unknown'
+  if (PROC_ACRONYMS.has(p.toLowerCase())) return p.toUpperCase()
   return p.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
