@@ -4,7 +4,7 @@ import { ThemeProvider } from '@/components/ThemeProvider'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Beast Recon — Agent Status',
+  title: 'Beast Deposit Reconciliation Agent Status',
   description: 'Operations & monitoring for the daily reconciliation pipeline.',
 }
 

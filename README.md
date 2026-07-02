@@ -1,4 +1,4 @@
-# Beast Recon — Agent Status
+# Beast Deposit Reconciliation Agent Status
 
 A live operations dashboard for the daily reconciliation agent. Same design
 system as the chargeback ops board, but driven entirely by one table:
