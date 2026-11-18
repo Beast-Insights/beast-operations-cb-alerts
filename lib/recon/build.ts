@@ -16,14 +16,14 @@ import type {
   RunError, RunGridDay, RunStatus, RunSummary, ScrapersResponse, TrendPoint, WeekDay,
 } from './types';
 
-const RUNS_PER_AGENT = 12;
-const STALE_HOURS = 36;
+export const RUNS_PER_AGENT = 12;
+export const STALE_HOURS = 36;
 // Gateways whose most recent run is older than this are treated as defunct /
 // decommissioned (e.g. a MID that was replaced) and dropped from the board — a
 // daily job that hasn't run in a week is no longer a live agent. Their historic
 // runs still count in the overview aggregates.
-const IDLE_DROP_HOURS = 7 * 24;
-const GRID_DAYS = 30;
+export const IDLE_DROP_HOURS = 7 * 24;
+export const GRID_DAYS = 30;
 const CACHE_TTL_MS = 55_000;
 
 interface LogRow {
@@ -70,13 +70,13 @@ async function fetchRows(): Promise<LogRow[]> {
 }
 
 // ---- IST day helpers (IST has no DST, so 24h steps keep the clock stable) ----
-function istKey(d: Date): string {
+export function istKey(d: Date): string {
   return d.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }); // YYYY-MM-DD
 }
 function istLabel(d: Date): string {
   return d.toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata', month: 'short', day: '2-digit' });
 }
-function lastNDays(now: Date, n: number): { key: string; label: string }[] {
+export function lastNDays(now: Date, n: number): { key: string; label: string }[] {
   const out: { key: string; label: string }[] = [];
   for (let i = n - 1; i >= 0; i--) {
     const d = new Date(now.getTime() - i * 86_400_000);
@@ -85,9 +85,9 @@ function lastNDays(now: Date, n: number): { key: string; label: string }[] {
   return out;
 }
 
-const DAY_RANK: Record<DayStatus, number> = { none: -1, healthy: 0, stale: 0, warning: 1, error: 2 };
+export const DAY_RANK: Record<DayStatus, number> = { none: -1, healthy: 0, stale: 0, warning: 1, error: 2 };
 
-interface InternalRun extends RunSummary {
+export interface InternalRun extends RunSummary {
   _started: Date;
   _client: string;
   _gw: string;
@@ -253,12 +253,12 @@ function buildSnapshot(rows: LogRow[], now: Date): Snapshot {
   return { scrapers, overview };
 }
 
-function stripInternal(r: InternalRun): RunSummary {
+export function stripInternal(r: InternalRun): RunSummary {
   const { _started, _client, _gw, ...rest } = r;
   return rest;
 }
 
-function buildOverview(
+export function buildOverview(
   agentsArr: AgentRow[],
   allRuns: InternalRun[],
   week: { key: string; label: string }[],

@@ -7,6 +7,7 @@ import {
   RiAlertLine,
   RiBarChart2Line,
   RiBankLine,
+  RiShieldCheckLine,
   RiSunLine,
   RiMoonLine,
   RiMenuFoldLine,
@@ -43,6 +44,12 @@ const NAV: NavItem[] = [
     icon: RiBankLine,
     matches: ['/recon'],
   },
+  {
+    label: 'Disputeless',
+    href: '/disputeless',
+    icon: RiShieldCheckLine,
+    matches: ['/disputeless'],
+  },
 ]
 
 function isActive(pathname: string, item: NavItem): boolean {
@@ -53,6 +60,10 @@ function isActive(pathname: string, item: NavItem): boolean {
   // Deposit Recon wins whenever the path is /recon...
   if (pathname === '/recon' || pathname.startsWith('/recon/')) {
     return item.label === 'Deposit Recon'
+  }
+  // Disputeless wins whenever the path is /disputeless...
+  if (pathname === '/disputeless' || pathname.startsWith('/disputeless/')) {
+    return item.label === 'Disputeless'
   }
   // Otherwise Alerts is the active section for every other path
   return item.label === 'Alerts'
