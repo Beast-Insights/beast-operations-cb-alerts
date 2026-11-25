@@ -7,6 +7,7 @@ import { TabNavigation, TabNavigationLink } from '@/components/TabNavigation'
 const TABS = [
   { href: '/disputeless', label: 'Health Overview', match: (p: string) => p === '/disputeless' },
   { href: '/disputeless/scrapers', label: 'Scrapers', match: (p: string) => p.startsWith('/disputeless/scrapers') },
+  { href: '/disputeless/pending', label: 'Pending Scrapers', match: (p: string) => p.startsWith('/disputeless/pending') },
 ]
 
 export default function OpsLayout({ children }: { children: React.ReactNode }) {
